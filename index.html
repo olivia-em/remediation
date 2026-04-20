@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REMEDIATIONS</title>
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caudex:ital,wght@0,400;0,700;1,400;1,700&family=Instrument+Serif:ital@0;1&family=Jacquard+12&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .toggle {
+        display: inline-block;
+        width: 3em;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="title"></h1>
+    </main>
+
+    <script>
+      const phonemeMap = [
+        { phoneme: "R", letter: "R" },
+        { phoneme: "IH0", letter: "E" },
+        { phoneme: "M", letter: "M" },
+        { phoneme: "IY2", letter: "E" },
+        { phoneme: "D", letter: "D" },
+        { phoneme: "IY0", letter: "I" },
+        { phoneme: "EY1", letter: "A" },
+        { phoneme: "SH", letter: "TI" },
+        { phoneme: "AH0", letter: "O" },
+        { phoneme: "N", letter: "N" },
+        { phoneme: "Z", letter: "S" },
+      ];
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const h1 = document.querySelector("h1");
+
+        let html = "[ ' ";
+        phonemeMap.forEach((item, index) => {
+          let toggle = `<span class="toggle" data-index="${index}">${item.phoneme}</span>`;
+
+          if (index === 0) {
+            toggle = `<a href="./closecaptions.html">${toggle}</a>`;
+          } else if (index === 4) {
+            toggle = `<a href="./fragments.html">${toggle}</a>`;
+          } else if (index === 9) {
+            toggle = `<a href="./metamorphoses.html">${toggle}</a>`;
+          }
+
+          html += toggle;
+          if (index < phonemeMap.length - 1) html += " ";
+        });
+        html += " ' ]";
+
+        h1.innerHTML = html;
+
+        const toggles = document.querySelectorAll(".toggle");
+        toggles.forEach((el, index) => {
+          let isShowingPhoneme = true;
+          const delay = index * 200; // Stagger
+
+          setTimeout(() => {
+            setInterval(() => {
+              const data = phonemeMap[index];
+              el.textContent = isShowingPhoneme ? data.letter : data.phoneme;
+              isShowingPhoneme = !isShowingPhoneme;
+            }, 1500);
+          }, delay);
+        });
+      });
+    </script>
+  </body>
+</html>

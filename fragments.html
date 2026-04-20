@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FRAGMENTS</title>
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        overflow-x: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="column">
+      <section id="fragmentsColumn" class="fragments-column"></section>
+    </div>
+    <div id="overlayLayer" class="fragment-overlay-layer"></div>
+
+    <script>
+      const BASE_FONT_SIZE = 100;
+      const MIN_FONT_SIZE = 2;
+      const MAX_FONT_SIZE = 420;
+      const FIT_SAFETY = 0.985;
+
+      function getMeasurer() {
+        let el = document.getElementById("lineMeasure");
+        if (el) return el;
+
+        el = document.createElement("span");
+        el.id = "lineMeasure";
+        el.style.position = "absolute";
+        el.style.left = "-99999px";
+        el.style.top = "-99999px";
+        el.style.visibility = "hidden";
+        el.style.whiteSpace = "pre";
+        el.style.pointerEvents = "none";
+        document.body.appendChild(el);
+        return el;
+      }
+
+      function measureLongestLine(text, poemStyle) {
+        const measurer = getMeasurer();
+        measurer.style.fontFamily = poemStyle.fontFamily;
+        measurer.style.fontWeight = poemStyle.fontWeight;
+        measurer.style.fontStyle = poemStyle.fontStyle;
+        measurer.style.letterSpacing = poemStyle.letterSpacing;
+        measurer.style.wordSpacing = poemStyle.wordSpacing;
+        measurer.style.fontSize = `${BASE_FONT_SIZE}px`;
+        measurer.style.tabSize = poemStyle.tabSize;
+
+        const lines = text.split("\n");
+        let maxWidth = 0;
+        for (const line of lines) {
+          measurer.textContent = line;
+          const width = measurer.scrollWidth;
+          if (width > maxWidth) maxWidth = width;
+        }
+
+        return maxWidth;
+      }
+
+      const fragmentPairs = [];
+      let activeOverlayIndex = -1;
+
+      const indexHref = "./index.html";
+      const pdfHref = "./assets/Remediations.pdf";
+
+      function createNumeralLink(id, labelText) {
+        const link = document.createElement("a");
+        link.className = "fragment-id numerals";
+        link.textContent = labelText;
+        link.style.textAlign = id % 2 === 1 ? "left" : "right";
+        link.href = id % 2 === 1 ? indexHref : pdfHref;
+        return link;
+      }
+
+      function fitFragmentFonts() {
+        const poems = document.querySelectorAll(".fragment-spacer .poem");
+        const viewportWidth = document.documentElement.clientWidth;
+
+        poems.forEach((poem) => {
+          const style = getComputedStyle(poem);
+          const maxLineWidth = measureLongestLine(poem.textContent, style);
+
+          if (!maxLineWidth) return;
+
+          const targetSize =
+            (BASE_FONT_SIZE * viewportWidth * FIT_SAFETY) / maxLineWidth;
+          const clamped = Math.min(
+            MAX_FONT_SIZE,
+            Math.max(MIN_FONT_SIZE, targetSize),
+          );
+          poem.style.fontSize = `${clamped}px`;
+
+          // Final guard for rare rounding and scrollbar edge cases.
+          if (poem.scrollWidth > viewportWidth) {
+            const adjusted =
+              (clamped * viewportWidth * 0.995) / Math.max(poem.scrollWidth, 1);
+            poem.style.fontSize = `${Math.max(MIN_FONT_SIZE, adjusted)}px`;
+          }
+
+          const idLabel = poem.parentElement.querySelector(".fragment-id");
+          if (idLabel) {
+            idLabel.style.fontSize = poem.style.fontSize;
+          }
+
+          const overlayPair = fragmentPairs.find(
+            (pair) => pair.spacerPoem === poem,
+          );
+          if (overlayPair) {
+            overlayPair.overlayPoem.style.fontSize = poem.style.fontSize;
+            overlayPair.overlayId.style.fontSize = idLabel
+              ? idLabel.style.fontSize
+              : poem.style.fontSize;
+          }
+        });
+      }
+
+      function updatePinnedFragment() {
+        const spacers = fragmentPairs.map((pair) => pair.spacer);
+        if (spacers.length === 0) return;
+
+        let activeIndex = 0;
+        for (let i = 0; i < spacers.length; i++) {
+          if (spacers[i].getBoundingClientRect().top <= 0) {
+            activeIndex = i;
+          } else {
+            break;
+          }
+        }
+
+        if (activeIndex === activeOverlayIndex) return;
+        activeOverlayIndex = activeIndex;
+
+        const currentPair = fragmentPairs[activeIndex];
+        const overlayLayer = document.getElementById("overlayLayer");
+        overlayLayer.replaceChildren(currentPair.overlay);
+      }
+
+      function toRoman(num) {
+        const map = [
+          [1000, "M"],
+          [900, "CM"],
+          [500, "D"],
+          [400, "CD"],
+          [100, "C"],
+          [90, "XC"],
+          [50, "L"],
+          [40, "XL"],
+          [10, "X"],
+          [9, "IX"],
+          [5, "V"],
+          [4, "IV"],
+          [1, "I"],
+        ];
+
+        let n = num;
+        let out = "";
+        for (const [value, symbol] of map) {
+          while (n >= value) {
+            out += symbol;
+            n -= value;
+          }
+        }
+        return out;
+      }
+
+      function renderFragments(fragments) {
+        const column = document.getElementById("fragmentsColumn");
+        const overlayLayer = document.getElementById("overlayLayer");
+        const ids = Object.keys(fragments)
+          .map(Number)
+          .sort((a, b) => a - b);
+
+        ids.forEach((id) => {
+          const spacer = document.createElement("article");
+          spacer.className = "fragment fragment-spacer";
+
+          const spacerId = createNumeralLink(id, toRoman(id));
+
+          const spacerPoem = document.createElement("p");
+          spacerPoem.className = "poem";
+          spacerPoem.textContent = fragments[String(id)] || "";
+          spacerPoem.style.textAlign = id % 2 === 1 ? "left" : "right";
+
+          spacer.appendChild(spacerId);
+          spacer.appendChild(spacerPoem);
+          column.appendChild(spacer);
+
+          const overlay = document.createElement("article");
+          overlay.className = "fragment fragment-overlay";
+
+          const overlayId = createNumeralLink(id, toRoman(id));
+
+          const overlayPoem = document.createElement("p");
+          overlayPoem.className = "poem";
+          overlayPoem.textContent = fragments[String(id)] || "";
+          overlayPoem.style.textAlign = id % 2 === 1 ? "left" : "right";
+
+          overlay.appendChild(overlayId);
+          overlay.appendChild(overlayPoem);
+
+          fragmentPairs.push({
+            spacer,
+            spacerPoem,
+            overlay,
+            overlayId,
+            overlayPoem,
+          });
+        });
+
+        if (fragmentPairs.length > 0) {
+          overlayLayer.replaceChildren(fragmentPairs[0].overlay);
+          activeOverlayIndex = 0;
+        }
+
+        fitFragmentFonts();
+        updatePinnedFragment();
+      }
+
+      fetch("./fragments.json")
+        .then((response) => response.json())
+        .then((fragments) => {
+          renderFragments(fragments);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(fitFragmentFonts);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to load fragments.json", error);
+        });
+
+      let resizeRaf = null;
+      window.addEventListener("resize", () => {
+        if (resizeRaf) cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(() => {
+          fitFragmentFonts();
+          updatePinnedFragment();
+          resizeRaf = null;
+        });
+      });
+
+      let scrollRaf = null;
+      window.addEventListener("scroll", () => {
+        if (scrollRaf) return;
+        scrollRaf = requestAnimationFrame(() => {
+          updatePinnedFragment();
+          scrollRaf = null;
+        });
+      });
+    </script>
+  </body>
+</html>

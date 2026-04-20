@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>15 METAMORPHOSES</title>
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="grid">
+      <a href="./index.html" rel="noopener noreferrer"
+        ><div class="metamorph g1"><p class="type-line"></p></div
+      ></a>
+      <div class="metamorph g2"><p class="type-line"></p></div>
+      <div class="metamorph g3"><p class="type-line"></p></div>
+      <div class="metamorph g3"><p class="type-line"></p></div>
+      <div class="metamorph g1"><p class="type-line"></p></div>
+      <div class="metamorph g2"><p class="type-line"></p></div>
+      <div class="metamorph g2"><p class="type-line"></p></div>
+      <div class="metamorph g3"><p class="type-line"></p></div>
+      <div class="metamorph g1"><p class="type-line"></p></div>
+      <div class="metamorph g1"><p class="type-line"></p></div>
+      <div class="metamorph g2"><p class="type-line"></p></div>
+      <div class="metamorph g3"><p class="type-line"></p></div>
+      <div class="metamorph g3"><p class="type-line"></p></div>
+      <div class="metamorph g1"><p class="type-line"></p></div>
+      <a href="./index.html" rel="noopener noreferrer"
+        ><div class="metamorph g2"><p class="type-line"></p></div
+      ></a>
+    </div>
+    <script src="./typewriter.js"></script>
+    <script>
+      fetch("./metamorphoses-lines.json")
+        .then((response) => response.json())
+        .then((data) => {
+          const allLists = Array.isArray(data.lists) ? data.lists : [];
+          const lines = document.querySelectorAll(".type-line");
+
+          lines.forEach((line, index) => {
+            const items = Array.isArray(allLists[index]) ? allLists[index] : [];
+            if (items.length === 0) return;
+
+            startTypewriterLoop({
+              targetElement: line,
+              items,
+              typeSpeed: 40,
+              deleteSpeed: 22,
+              holdAfterType: 850,
+              holdAfterDelete: 220,
+            });
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to load metamorphoses lines JSON", error);
+        });
+    </script>
+  </body>
+</html>
