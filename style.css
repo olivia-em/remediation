@@ -16,6 +16,10 @@ a {
   transition: ease-in-out 0.5s color;
 }
 
+h1 {
+  font-size: 2vw;
+}
+
 a:hover {
   color: red;
 }
@@ -264,12 +268,11 @@ div.metamorph:hover {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 }
 
-a.numeral {
-  display: block;
-  color: red;
-  width: 100%;
+a.numerals {
+  display: inline-block;
   color: inherit;
-  background-color: inherit;
+  background-color: transparent;
+  text-decoration: none;
 }
 
 a.numerals:hover {

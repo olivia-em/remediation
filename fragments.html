@@ -68,12 +68,22 @@
       const pdfHref = "./assets/Remediations.pdf";
 
       function createNumeralLink(id, labelText) {
+        const label = document.createElement("div");
+        label.className = "fragment-id";
+        label.style.textAlign = id % 2 === 1 ? "left" : "right";
+
         const link = document.createElement("a");
-        link.className = "fragment-id numerals";
+        link.className = "numerals";
         link.textContent = labelText;
-        link.style.textAlign = id % 2 === 1 ? "left" : "right";
         link.href = id % 2 === 1 ? indexHref : pdfHref;
-        return link;
+
+        if (id % 2 === 0) {
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+        }
+
+        label.appendChild(link);
+        return label;
       }
 
       function fitFragmentFonts() {
