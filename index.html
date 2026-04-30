@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>REMEDIATIONS</title>
-    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -49,12 +49,13 @@
 
           if (index === 0) {
             toggle = `<a href="./closecaptions.html">${toggle}</a>`;
+          } else if (index === 2) {
+            toggle = `<a href="./et.html">${toggle}</a>`;
           } else if (index === 4) {
             toggle = `<a href="./fragments.html">${toggle}</a>`;
           } else if (index === 9) {
             toggle = `<a href="./metamorphoses.html">${toggle}</a>`;
           }
-
           html += toggle;
           if (index < phonemeMap.length - 1) html += " ";
         });
