@@ -22,8 +22,13 @@
     </style>
   </head>
   <body>
+    <img
+      src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+      alt="Background image"
+      class="hover-bg bg-1"
+    />
     <main>
-      <h1 id="et"><a class="word-link" href="./index.html"><span class="word-slot" id="odi-word">ŌDĪ</span></a> ET <a class="word-link" href="./assets/ET.pdf" target="_blank" rel="noopener noreferrer"><span class="word-slot" id="amo-word">AMŌ</span></a></h1>
+      <h1 id="et"><a class="word-link home-link" href="./index.html"><span class="word-slot" id="odi-word">ŌDĪ</span></a> ET <a class="word-link pdf-link" href="./assets/ET.pdf" target="_blank" rel="noopener noreferrer"><span class="word-slot" id="amo-word">AMŌ</span></a></h1>
     </main>
 
     <script>
@@ -48,8 +53,32 @@
       document.addEventListener("DOMContentLoaded", () => {
         const odiWord = document.getElementById("odi-word");
         const amoWord = document.getElementById("amo-word");
+        const hoverBg = document.querySelector(".hover-bg");
+        const odiLink = odiWord?.closest("a");
+        const amoLink = amoWord?.closest("a");
 
-        if (!odiWord || !amoWord) return;
+        if (!odiWord || !amoWord || !hoverBg || !odiLink || !amoLink) return;
+
+        const showBackground = (src) => {
+          hoverBg.src = src;
+          hoverBg.classList.add("is-visible");
+        };
+
+        const hideBackground = () => {
+          hoverBg.classList.remove("is-visible");
+        };
+
+        odiLink.addEventListener("mouseenter", () => {
+          showBackground("./assets/backgrounds/collex_pngs46.png");
+        });
+
+        odiLink.addEventListener("mouseleave", hideBackground);
+
+        amoLink.addEventListener("mouseenter", () => {
+          showBackground("./assets/backgrounds/collex_images10.png");
+        });
+
+        amoLink.addEventListener("mouseleave", hideBackground);
 
         let odiIndex = 0;
         let amoIndex = 0;

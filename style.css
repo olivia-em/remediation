@@ -28,13 +28,42 @@ a:hover {
 
 main {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100vh;
+}
+
+.hover-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.35s ease-in-out;
+  mix-blend-mode: difference;
+}
+
+.hover-bg.bg-1 {
+  z-index: 0;
+}
+
+.hover-bg.bg-2 {
+  z-index: 1;
+}
+
+.hover-bg.is-visible {
+  opacity: 1;
+}
+
+#title {
+  position: relative;
+  z-index: 4;
 }
 
 canvas {
@@ -298,4 +327,40 @@ a.numerals:hover {
 div.fragment-overlay-layer {
   background-blend-mode: difference;
   mix-blend-mode: difference;
+}
+
+/* CUSTOM CURSORS */
+
+@keyframes cursor-glitch {
+  0%,
+  100% {
+    cursor:
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><filter id="glow1"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="2" y="26" font-size="28" fill="cyan" font-family="serif" filter="url(%23glow1)" style="opacity: 1">α</text><text x="2" y="26" font-size="28" fill="red" font-family="serif">α</text></svg>')
+        2 26,
+      auto;
+  }
+  50% {
+    cursor:
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><filter id="glow2"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="2" y="26" font-size="28" fill="red" font-family="serif" filter="url(%23glow2)" style="opacity: 1">ω</text><text x="2" y="26" font-size="28" fill="cyan" font-family="serif">ω</text></svg>')
+        2 26,
+      auto;
+  }
+}
+
+a.home-link {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><filter id="glow3"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="2" y="26" font-size="28" fill="cyan" font-family="serif" filter="url(%23glow3)" style="opacity: 1">α</text><text x="2" y="26" font-size="28" fill="red" font-family="serif">α</text></svg>')
+      2 26,
+    auto;
+}
+
+a.pdf-link {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><defs><filter id="glow4"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="2" y="26" font-size="28" fill="red" font-family="serif" filter="url(%23glow4)" style="opacity: 1">ω</text><text x="2" y="26" font-size="28" fill="cyan" font-family="serif">ω</text></svg>')
+      2 26,
+    auto;
+}
+
+a.glitch-link {
+  animation: cursor-glitch 0.8s infinite;
 }

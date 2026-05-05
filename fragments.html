@@ -80,6 +80,9 @@
         if (id % 2 === 0) {
           link.target = "_blank";
           link.rel = "noopener noreferrer";
+          link.classList.add("pdf-link");
+        } else {
+          link.classList.add("home-link");
         }
 
         label.appendChild(link);

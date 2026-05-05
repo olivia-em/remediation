@@ -21,6 +21,16 @@
     </style>
   </head>
   <body>
+    <img
+      src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+      alt="Background image"
+      class="hover-bg bg-1"
+    />
+    <img
+      src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+      alt="Background image"
+      class="hover-bg bg-2"
+    />
     <main>
       <h1 id="title"></h1>
     </main>
@@ -48,13 +58,13 @@
           let toggle = `<span class="toggle" data-index="${index}">${item.phoneme}</span>`;
 
           if (index === 0) {
-            toggle = `<a href="./closecaptions.html">${toggle}</a>`;
+            toggle = `<a href="./closecaptions.html" class="glitch-link index-link" data-bg1="./assets/backgrounds/collex_images33.png" data-bg2="./assets/backgrounds/collex_pngs9.png" data-alt1="Collex image 33 background" data-alt2="Collex PNG 9 background">${toggle}</a>`;
           } else if (index === 2) {
-            toggle = `<a href="./et.html">${toggle}</a>`;
+            toggle = `<a href="./et.html" class="glitch-link index-link" data-bg1="./assets/backgrounds/collex_pngs46.png" data-bg2="./assets/backgrounds/collex_images10.png" data-alt1="Collex PNG 46 background" data-alt2="Collex image 10 background">${toggle}</a>`;
           } else if (index === 4) {
-            toggle = `<a href="./fragments.html">${toggle}</a>`;
+            toggle = `<a href="./fragments.html" class="glitch-link index-link" data-bg1="./assets/backgrounds/fragments.avif" data-bg2="./assets/backgrounds/collex_images14.png" data-alt1="Fragment of a Sappho poem, The Oxyrhynchus Papyri: Part X. Wikimedia Commons" data-alt2="Collex image 14 background">${toggle}</a>`;
           } else if (index === 9) {
-            toggle = `<a href="./metamorphoses.html">${toggle}</a>`;
+            toggle = `<a href="./metamorphoses.html" class="glitch-link index-link" data-bg1="./assets/backgrounds/collex_images53.png" data-bg2="./assets/backgrounds/metamorphoses.jpg" data-alt1="Collex image 53 background" data-alt2="Neapolitan Ovid. Illuminated manuscript on parchment. Eleventh to thirteenth century. Biblioteca Nazionale di Napoli. © World Digital Library." >${toggle}</a>`;
           }
           html += toggle;
           if (index < phonemeMap.length - 1) html += " ";
@@ -62,6 +72,71 @@
         html += " ' ]";
 
         h1.innerHTML = html;
+
+        const backgroundLayers = Array.from(
+          document.querySelectorAll(".hover-bg"),
+        );
+        const layerTimings = [0, 700];
+        const layerHideTimings = [0, 700];
+        const activeTimers = [];
+
+        function setBackgroundPair(src1, src2) {
+          const nextSources = [src1, src2];
+          const nextAlts = [
+            document.activeElement?.dataset?.alt1 || "Background image",
+            document.activeElement?.dataset?.alt2 || "Background image",
+          ];
+
+          activeTimers.forEach((timerId) => clearTimeout(timerId));
+          activeTimers.length = 0;
+
+          backgroundLayers.forEach((layer, index) => {
+            layer.src = nextSources[index];
+            layer.alt = nextAlts[index];
+            const timerId = setTimeout(() => {
+              layer.classList.add("is-visible");
+            }, layerTimings[index] || 0);
+            activeTimers.push(timerId);
+          });
+        }
+
+        function clearBackgroundPair() {
+          activeTimers.forEach((timerId) => clearTimeout(timerId));
+          activeTimers.length = 0;
+
+          backgroundLayers.forEach((layer, index) => {
+            const timerId = setTimeout(() => {
+              layer.classList.remove("is-visible");
+            }, layerHideTimings[index] || 0);
+            activeTimers.push(timerId);
+          });
+        }
+
+        clearBackgroundPair();
+
+        const indexLinks = document.querySelectorAll(".index-link");
+        indexLinks.forEach((link) => {
+          link.addEventListener("mouseenter", () => {
+            const nextSources = [link.dataset.bg1, link.dataset.bg2];
+            const nextAlts = [link.dataset.alt1, link.dataset.alt2];
+
+            activeTimers.forEach((timerId) => clearTimeout(timerId));
+            activeTimers.length = 0;
+
+            backgroundLayers.forEach((layer, index) => {
+              layer.src = nextSources[index];
+              layer.alt = nextAlts[index] || "Background image";
+              const timerId = setTimeout(() => {
+                layer.classList.add("is-visible");
+              }, layerTimings[index] || 0);
+              activeTimers.push(timerId);
+            });
+          });
+
+          link.addEventListener("mouseleave", () => {
+            clearBackgroundPair();
+          });
+        });
 
         const toggles = document.querySelectorAll(".toggle");
         toggles.forEach((el, index) => {
